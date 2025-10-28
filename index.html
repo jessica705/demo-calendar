@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Family Dollar Regional Manager Calendar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 20px 15px;
+            }
+            
+            .header h1 {
+                font-size: 1.4em;
+            }
+            
+            .header p {
+                font-size: 0.9em;
+            }
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-nav {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+        }
+
+        .month-year {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2a5298;
+        }
+
+        @media (max-width: 768px) {
+            .month-year {
+                font-size: 1.2em;
+            }
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: #2a5298;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .nav-btn {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+        }
+
+        .nav-btn:hover {
+            background: #1e3c72;
+            transform: translateY(-2px);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background: #dee2e6;
+            padding: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-grid {
+                padding: 10px;
+                gap: 1px;
+            }
+        }
+
+        .day-header {
+            background: #495057;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .day-header {
+                padding: 8px 2px;
+                font-size: 0.7em;
+            }
+        }
+
+        .day-cell {
+            background: white;
+            min-height: 120px;
+            padding: 10px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        @media (max-width: 768px) {
+            .day-cell {
+                min-height: 80px;
+                padding: 5px;
+            }
+            
+            .day-cell:hover {
+                transform: none;
+            }
+        }
+
+        .day-cell:hover {
+            background: #f8f9fa;
+            transform: scale(1.02);
+        }
+
+        .day-cell.other-month {
+            background: #f8f9fa;
+            color: #adb5bd;
+        }
+
+        .day-number {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #495057;
+        }
+
+        @media (max-width: 768px) {
+            .day-number {
+                font-size: 0.8em;
+                margin-bottom: 3px;
+            }
+        }
+
+        .day-cell.today {
+            background: #e7f3ff;
+            border: 2px solid #2a5298;
+        }
+
+        .event {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 8px;
+            margin: 3px 0;
+            border-radius: 5px;
+            font-size: 0.75em;
+            cursor: pointer;
+            transition: all 0.2s;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .event {
+                padding: 3px 5px;
+                font-size: 0.6em;
+                margin: 2px 0;
+            }
+            
+            .event:hover {
+                transform: none;
+            }
+        }
+
+        .event:hover {
+            transform: translateX(3px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .event.store-visit {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .event.meeting {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .event.training {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .event.review {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                padding: 20px;
+                width: 95%;
+                max-height: 90vh;
+                border-radius: 15px;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translate(-50%, -40%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.8em;
+            color: #2a5298;
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .modal-title {
+                font-size: 1.3em;
+            }
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2em;
+            cursor: pointer;
+            color: #adb5bd;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #495057;
+        }
+
+        .event-detail {
+            margin: 15px 0;
+        }
+
+        .event-detail-label {
+            font-weight: bold;
+            color: #495057;
+            margin-bottom: 5px;
+        }
+
+        .event-detail-value {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+
+        .event-type-badge {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            padding: 20px 30px;
+            background: #f8f9fa;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .legend {
+                padding: 15px 10px;
+                gap: 10px;
+            }
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            .legend-item {
+                font-size: 0.75em;
+                gap: 5px;
+            }
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .legend-color {
+                width: 15px;
+                height: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Regional Manager Calendar</h1>
+            <p>Family Dollar - Northeast Region</p>
+        </div>
+
+        <div class="calendar-nav">
+            <div class="month-year" id="monthYear"></div>
+            <div class="nav-buttons">
+                <button class="nav-btn" onclick="previousMonth()">← Previous</button>
+                <button class="nav-btn" onclick="nextMonth()">Next →</button>
+                <button class="nav-btn" onclick="goToToday()">Today</button>
+            </div>
+        </div>
+
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                <span>Store Visit</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                <span>Meeting</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);"></div>
+                <span>Training</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                <span>Review</span>
+            </div>
+        </div>
+
+        <div class="calendar-grid" id="calendar"></div>
+    </div>
+
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        
+        const events = {
+            '2025-10-28': [
+                {
+                    title: 'Store #1423 Visit',
+                    type: 'store-visit',
+                    time: '9:00 AM - 11:00 AM',
+                    location: 'Philadelphia, PA',
+                    description: 'Monthly compliance audit and staff review. Focus on inventory management and customer service standards.',
+                    notes: 'Manager reported recent turnover. Need to discuss hiring strategy.',
+                    priority: 'High'
+                }
+            ],
+            '2025-10-29': [
+                {
+                    title: 'Regional Team Meeting',
+                    type: 'meeting',
+                    time: '2:00 PM - 4:00 PM',
+                    location: 'Regional Office',
+                    description: 'Q4 performance review and strategic planning session. Discussion of holiday season preparation.',
+                    attendees: 'All district managers, HR representative',
+                    priority: 'High'
+                }
+            ],
+            '2025-10-30': [
+                {
+                    title: 'Store #1445 Visit',
+                    type: 'store-visit',
+                    time: '10:00 AM - 12:00 PM',
+                    location: 'Camden, NJ',
+                    description: 'Follow-up visit for recent merchandising issues. Review new display implementations.',
+                    notes: 'Store showing improvement in sales metrics.',
+                    priority: 'Medium'
+                },
+                {
+                    title: 'Conference Call',
+                    type: 'meeting',
+                    time: '3:00 PM - 3:30 PM',
+                    location: 'Virtual',
+                    description: 'Weekly check-in with corporate operations team.',
+                    priority: 'Medium'
+                }
+            ],
+            '2025-11-03': [
+                {
+                    title: 'Loss Prevention Training',
+                    type: 'training',
+                    time: '9:00 AM - 3:00 PM',
+                    location: 'Training Center',
+                    description: 'Updated loss prevention protocols and security system training for all store managers in region.',
+                    attendees: '15 store managers',
+                    priority: 'High'
+                }
+            ],
+            '2025-11-05': [
+                {
+                    title: 'Store #1467 Visit',
+                    type: 'store-visit',
+                    time: '11:00 AM - 1:00 PM',
+                    location: 'Wilmington, DE',
+                    description: 'New store manager introduction and operational overview.',
+                    priority: 'High'
+                }
+            ],
+            '2025-11-07': [
+                {
+                    title: 'Budget Review',
+                    type: 'review',
+                    time: '1:00 PM - 3:00 PM',
+                    location: 'Regional Office',
+                    description: 'Q4 budget analysis and Q1 2026 planning with finance team.',
+                    attendees: 'Finance Director, District Managers',
+                    priority: 'High'
+                }
+            ],
+            '2025-11-10': [
+                {
+                    title: 'Store #1489 Visit',
+                    type: 'store-visit',
+                    time: '9:00 AM - 11:00 AM',
+                    location: 'Trenton, NJ',
+                    description: 'Quarterly performance review with store manager. Discuss sales targets and staffing.',
+                    priority: 'Medium'
+                }
+            ],
+            '2025-11-12': [
+                {
+                    title: 'District Manager 1-on-1',
+                    type: 'meeting',
+                    time: '10:00 AM - 11:30 AM',
+                    location: 'Regional Office',
+                    description: 'Performance review and career development discussion.',
+                    priority: 'Medium'
+                }
+            ],
+            '2025-11-14': [
+                {
+                    title: 'Holiday Readiness Training',
+                    type: 'training',
+                    time: '9:00 AM - 4:00 PM',
+                    location: 'Regional Office',
+                    description: 'Comprehensive holiday season preparation including inventory management, seasonal hiring, and customer service excellence.',
+                    priority: 'High'
+                }
+            ],
+            '2025-11-17': [
+                {
+                    title: 'Store #1502 Visit',
+                    type: 'store-visit',
+                    time: '10:00 AM - 12:00 PM',
+                    location: 'Reading, PA',
+                    description: 'Pre-holiday inspection and inventory verification.',
+                    priority: 'High'
+                }
+            ],
+            '2025-11-19': [
+                {
+                    title: 'Corporate Strategy Call',
+                    type: 'meeting',
+                    time: '2:00 PM - 3:30 PM',
+                    location: 'Virtual',
+                    description: 'Q1 2026 strategic initiatives and expansion plans discussion.',
+                    priority: 'High'
+                }
+            ],
+            '2025-11-21': [
+                {
+                    title: 'Multi-Store Tour',
+                    type: 'store-visit',
+                    time: '8:00 AM - 5:00 PM',
+                    location: 'Various - PA Region',
+                    description: 'Visit stores #1515, #1523, and #1531 for final holiday readiness checks.',
+                    notes: 'Full day tour - bring checklist',
+                    priority: 'High'
+                }
+            ],
+            '2025-11-24': [
+                {
+                    title: 'Safety Compliance Review',
+                    type: 'review',
+                    time: '11:00 AM - 1:00 PM',
+                    location: 'Regional Office',
+                    description: 'Monthly safety audit review and compliance documentation.',
+                    priority: 'Medium'
+                }
+            ],
+            '2025-11-26': [
+                {
+                    title: 'Performance Analytics Review',
+                    type: 'review',
+                    time: '9:00 AM - 11:00 AM',
+                    location: 'Regional Office',
+                    description: 'Review November sales data and KPI metrics across all district stores.',
+                    priority: 'High'
+                }
+            ]
+        };
+
+        function renderCalendar() {
+            const calendar = document.getElementById('calendar');
+            const monthYear = document.getElementById('monthYear');
+            
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+            
+            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            monthYear.textContent = `${monthNames[month]} ${year}`;
+            
+            calendar.innerHTML = '';
+            
+            const dayHeaders = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            dayHeaders.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'day-header';
+                header.textContent = day;
+                calendar.appendChild(header);
+            });
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            const today = new Date();
+            const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+            
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const cell = createDayCell(daysInPrevMonth - i, true);
+                calendar.appendChild(cell);
+            }
+            
+            for (let day = 1; day <= daysInMonth; day++) {
+                const cell = createDayCell(day, false);
+                if (isCurrentMonth && day === today.getDate()) {
+                    cell.classList.add('today');
+                }
+                
+                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                if (events[dateStr]) {
+                    events[dateStr].forEach(event => {
+                        const eventEl = document.createElement('div');
+                        eventEl.className = `event ${event.type}`;
+                        eventEl.textContent = event.title;
+                        eventEl.onclick = (e) => {
+                            e.stopPropagation();
+                            showEventDetail(event);
+                        };
+                        cell.appendChild(eventEl);
+                    });
+                }
+                
+                calendar.appendChild(cell);
+            }
+            
+            const totalCells = firstDay + daysInMonth;
+            const remainingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+            
+            for (let i = 1; i <= remainingCells; i++) {
+                const cell = createDayCell(i, true);
+                calendar.appendChild(cell);
+            }
+        }
+
+        function createDayCell(day, isOtherMonth) {
+            const cell = document.createElement('div');
+            cell.className = 'day-cell';
+            if (isOtherMonth) {
+                cell.classList.add('other-month');
+            }
+            
+            const dayNumber = document.createElement('div');
+            dayNumber.className = 'day-number';
+            dayNumber.textContent = day;
+            cell.appendChild(dayNumber);
+            
+            return cell;
+        }
+
+        function showEventDetail(event) {
+            const modal = document.getElementById('eventModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            
+            title.textContent = event.title;
+            
+            const typeBadgeColors = {
+                'store-visit': 'background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;',
+                'meeting': 'background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;',
+                'training': 'background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); color: white;',
+                'review': 'background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); color: white;'
+            };
+            
+            body.innerHTML = `
+                <div class="event-type-badge" style="${typeBadgeColors[event.type]}">${event.type.replace('-', ' ').toUpperCase()}</div>
+                ${event.time ? `
+                    <div class="event-detail">
+                        <div class="event-detail-label">⏰ Time</div>
+                        <div class="event-detail-value">${event.time}</div>
+                    </div>
+                ` : ''}
+                ${event.location ? `
+                    <div class="event-detail">
+                        <div class="event-detail-label">📍 Location</div>
+                        <div class="event-detail-value">${event.location}</div>
+                    </div>
+                ` : ''}
+                ${event.description ? `
+                    <div class="event-detail">
+                        <div class="event-detail-label">📋 Description</div>
+                        <div class="event-detail-value">${event.description}</div>
+                    </div>
+                ` : ''}
+                ${event.attendees ? `
+                    <div class="event-detail">
+                        <div class="event-detail-label">👥 Attendees</div>
+                        <div class="event-detail-value">${event.attendees}</div>
+                    </div>
+                ` : ''}
+                ${event.notes ? `
+                    <div class="event-detail">
+                        <div class="event-detail-label">📝 Notes</div>
+                        <div class="event-detail-value">${event.notes}</div>
+                    </div>
+                ` : ''}
+                ${event.priority ? `
+                    <div class="event-detail">
+                        <div class="event-detail-label">⚡ Priority</div>
+                        <div class="event-detail-value">${event.priority}</div>
+                    </div>
+                ` : ''}
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('eventModal').style.display = 'none';
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function goToToday() {
+            currentDate = new Date();
+            renderCalendar();
+        }
+
+        window.onclick = function(e) {
+            const modal = document.getElementById('eventModal');
+            if (e.target === modal) {
+                closeModal();
+            }
+        }
+
+        renderCalendar();
+    </script>
+</body>
+</html>
